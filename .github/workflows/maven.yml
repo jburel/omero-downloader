@@ -13,12 +13,13 @@ jobs:
   build:
     strategy:
       matrix:
-        java: [1.8, 11]
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        java: [1.8]
+        os: [ubuntu-latest]
     runs-on: ${{ matrix.os }}
     env:
       maven_commands: install # default is install
       artifact_dir: target/*
+      publishing_target: github
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK ${{ matrix.java }}
@@ -31,15 +32,9 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      - name: Build
-        run: mvn ${{ env.maven_commands }}
-      - name: Upload artifacts
-        if: matrix.os == 'ubuntu-latest' && matrix.java == '1.8'
-        uses: actions/upload-artifact@v2
-        with:
-          name: artifacts
-          path: ${{ env.artifact_dir }}
-          if-no-files-found: error
+      - name: Create publishing target
+        if: ${{ env.publishing_target }} != ''
+        run: touch ${{ env.publishing_target }}.txt
   release:
     runs-on: ubuntu-latest
     needs: build
@@ -48,9 +43,16 @@ jobs:
       - name: Download artifacts from build
         uses: actions/download-artifact@v2
       - name: List artifacts
-        run: ls -R
+        id: get_target
+        run: |
+          ls -R
+          files=(`find ./ -maxdepth 1 -name "*.txt"`)
+          if [ ${#files[@]} -gt 0 ]; then
+            target="$(basename ${values[0]} .txt)"
+            echo ::set-output name=publishing_target::$target
+          fi
       - name: Upload binaries to release
-        if: startsWith(github.ref, 'refs/tags')
+        if: startsWith(github.ref, 'refs/tags') && ${{ steps.get_target.outputs.publishing_target }} =='github'
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
