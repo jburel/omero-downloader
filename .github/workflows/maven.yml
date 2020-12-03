@@ -35,6 +35,13 @@ jobs:
       - name: Create publishing target
         if: ${{ env.publishing_target }} != ''
         run: touch ${{ env.publishing_target }}.txt
+      - name: Upload artifacts
+        if: matrix.os == 'ubuntu-latest' && matrix.java == '1.8'
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.publishing_target }}.txt
+          path: ${{ env.publishing_target }}.txt
+          if-no-files-found: error
   release:
     runs-on: ubuntu-latest
     needs: build
