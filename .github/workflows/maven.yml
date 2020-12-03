@@ -33,7 +33,7 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
       - name: Build
         run: mvn ${{ env.maven_commands }}
-      - name: Upload as artifact
+      - name: Upload artifacts
         if: matrix.os == 'ubuntu-latest' && matrix.java == '1.8'
         uses: actions/upload-artifact@v2
         with:
