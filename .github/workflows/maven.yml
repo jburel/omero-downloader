@@ -34,7 +34,7 @@ jobs:
       - name: Build
         run: mvn ${{ env.maven_commands }}
       - name: Upload as artifact
-        if: matrix.java == '1.8'
+        if: matrix.os == 'ubuntu-latest' && matrix.java == '1.8'
         uses: actions/upload-artifact@v2
         with:
           name: artifacts
@@ -47,10 +47,8 @@ jobs:
     steps:
       - name: Download artifacts from build
         uses: actions/download-artifact@v2
-      - name: unzip artifacts
-        run: |
-          unzip artifacts.zip
-          rm artifacts.zip
+      - name: List artifacts
+        run: ls -R
       - name: Upload binaries to release
         if: startsWith(github.ref, 'refs/tags')
         uses: svenstaro/upload-release-action@v2
