@@ -15,7 +15,6 @@ jobs:
       matrix:
         java: [1.8]
         os: [ubuntu-latest, windows-latest, macos-latest]
-        artifact_dir:
     runs-on: ${{ matrix.os }}
     env:
       maven_commands: install # default is install
