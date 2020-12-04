@@ -18,7 +18,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
       maven_commands: install # default is install
-      artifact_dir: target/*.[sh|txt]
+      artifact_dir: target/*.\(sh\|txt\)
       artifact_dir_1: target/*.sh
       artifact_dir_2: target/*.txt   
     steps:
