@@ -37,8 +37,8 @@ jobs:
           if-no-files-found: error
           retention-days: 1
           path: |
-            $${ env.artifact_dir_1 }}
-            $${ env.artifact_dir_2 }}
+            ${{ env.artifact_dir_1 }}
+            ${{ env.artifact_dir_2 }}
   release:
     runs-on: ubuntu-latest
     needs: build
