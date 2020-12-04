@@ -14,11 +14,13 @@ jobs:
     strategy:
       matrix:
         java: [1.8]
-        os: [ubuntu-latest]
-        artifact_dir: [target/*.jar]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        artifact_dir:
     runs-on: ${{ matrix.os }}
     env:
       maven_commands: install # default is install
+      artifact_dir: target/*.jar
+      artifact_dir_zip: target/*.zip
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK ${{ matrix.java }}
@@ -38,8 +40,11 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: artifacts
-          path: ${{ matrix.artifact_dir }}
+          path: |
+            ${{ env.artifact_dir }}
+            ${{ artifact_dir_zip }}
           if-no-files-found: error
+          retention-days: 1
   release:
     runs-on: ubuntu-latest
     needs: build
