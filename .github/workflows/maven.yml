@@ -14,7 +14,7 @@ jobs:
     strategy:
       matrix:
         java: [1.8]
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest]
     runs-on: ${{ matrix.os }}
     env:
       maven_commands: install # default is install
@@ -26,7 +26,7 @@ jobs:
           mkdir target
           cp download.sh target
           cp pom.xml target
-          cp github.txt target
+          cp LICENSE.txt target
       - name: Upload artifacts
         if: matrix.os == 'ubuntu-latest' && matrix.java == '1.8'
         uses: actions/upload-artifact@v2
