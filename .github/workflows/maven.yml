@@ -18,9 +18,15 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
       maven_commands: install # default is install
-      artifact_dir: ./*.(sh|txt)
+      artifact_dir: target/*.(sh|txt)
     steps:
       - uses: actions/checkout@v2
+      - name: move file
+        run: |
+          mkdir target
+          cp download.sh target
+          cp pom.xml target
+          cp github.txt target
       - name: Upload artifacts
         if: matrix.os == 'ubuntu-latest' && matrix.java == '1.8'
         uses: actions/upload-artifact@v2
